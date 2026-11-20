@@ -163,3 +163,7 @@ html[data-theme="light"] .password-wrap { border-color: #7295ca55; }
   .portal, .entry { background: #183263; }
   html[data-theme="light"] .portal, html[data-theme="light"] .entry { background: #edf3ff; }
 }
+
+.enter-button:not(:disabled){cursor:pointer;transition:filter .2s,transform .2s}
+.enter-button:not(:disabled):hover{filter:brightness(1.12);transform:translateY(-1px)}
+.enter-button:focus-visible{outline:3px solid var(--accent);outline-offset:4px}

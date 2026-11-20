@@ -6,8 +6,8 @@
   <meta name="color-scheme" content="dark light">
   <meta name="description" content="Ayman’s Library — a personal space for reading, thinking and writing.">
   <title>Ayman’s Library</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="styles.css?v=0.2">
+  <script src="app.js?v=0.2" defer></script>
 </head>
 <body>
   <header class="page-header">
@@ -38,14 +38,8 @@
           </select>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
         </div>
-        <label for="password">Password</label>
-        <div class="password-wrap">
-          <svg class="lock-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-          <input id="password" type="password" placeholder="Sign-in connection pending" autocomplete="current-password" aria-describedby="connection-status" disabled>
-          <svg class="eye-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
-        </div>
-        <button class="enter-button" type="submit" disabled>Enter</button>
-        <p id="connection-status" class="connection-status" role="status">Design preview. Library sign-in will be connected in the next stage.</p>
+        <button class="enter-button" type="submit">Enter</button>
+        <p id="connection-status" class="connection-status" role="status">Interface preview · No password required.</p>
       </form>
     </section>
   </main>

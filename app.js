@@ -36,5 +36,6 @@ themeInputs.forEach(input => {
 systemTheme.addEventListener('change', renderTheme);
 document.getElementById('portal-form').addEventListener('submit', event => {
   event.preventDefault();
+  window.location.href = document.getElementById('destination').value === 'writing' ? 'library.html#writing' : 'library.html#dashboard';
 });
 renderTheme();
