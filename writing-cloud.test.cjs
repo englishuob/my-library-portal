@@ -1,0 +1,21 @@
+'use strict';
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+let callback,requests=[],data={documentId:'test_doc',title:'Test',revisionId:'r1',body:{content:[{startIndex:0,endIndex:1,sectionBreak:{}},{startIndex:1,endIndex:2,paragraph:{elements:[{textRun:{content:'\n'}}],paragraphStyle:{}}}]}};
+const store=new Map(),events={};
+const context={window:{},localStorage:{getItem:k=>store.get(k)},addEventListener:(n,f)=>events[n]=f,AbortController,URLSearchParams,setTimeout:()=>1,clearTimeout,Date,console,fetch:async(url,options)=>{requests.push({url,options});let body={};if(url.includes('/files?')&&options.method==='POST')body={id:'test_doc'};else if(url.includes('/files/test_doc'))body={id:'test_doc',appProperties:{workspace:'myoffice-writer-v1'}};else if(url.includes(':batchUpdate'))body={};else if(url.includes('/documents/test_doc'))body=data;else body={files:[]};return {ok:true,status:200,json:async()=>body};}};
+context.google=context.window.google={accounts:{oauth2:{initTokenClient:x=>{callback=x.callback;assert.equal(x.scope,'https://www.googleapis.com/auth/drive.file');return {requestAccessToken:()=>{}}},hasGrantedAllScopes:()=>true}}};
+vm.runInNewContext(fs.readFileSync(__dirname+'/writing-cloud.js','utf8'),context);const api=context.window.WriterCloud;
+const text=t=>({nodeType:3,textContent:t}),element=(tag,children=[],dir='')=>({nodeType:1,tagName:tag,nodeName:tag,childNodes:children,dir,style:{fontWeight:'',fontStyle:'',textDecoration:''}});
+(async()=>{
+api.connect('test.apps.googleusercontent.com');callback({access_token:'test-only-token',expires_in:3600});
+const root=element('ARTICLE',[element('H1',[text('Hello 😀')]),element('P',[element('B',[text('مرحبا')])],'rtl'),element('UL',[element('LI',[text('A')])])]);
+const m=api.encode(root,'ltr');assert.equal(m.text,'Hello 😀\nمرحبا\nA\n');assert.equal(m.paragraphs[1].rtl,true);assert.equal(m.runs[1].bold,true);assert.equal(m.paragraphs[0].end,10);assert.equal(m.paragraphs[2].bullet,true);
+assert.throws(()=>api.encode(element('ARTICLE',[element('IMG')]),'ltr'),/Unsupported/);
+const id=await api.create('Test');assert.equal(id,'test_doc');await api.save(id,'Test',m,'r1');let update=requests.find(x=>x.url.includes(':batchUpdate'));const body=JSON.parse(update.options.body);assert.equal(body.writeControl.requiredRevisionId,'r1');assert.equal(body.requests[0].insertText.text,m.text);
+requests=[];await assert.rejects(api.save(id,'Test',m,'stale'),/changed outside/);assert(!requests.some(x=>x.options.method!=='GET'));
+data={...data,body:{content:[{startIndex:1,endIndex:9,paragraph:{elements:[{textRun:{content:'<script>\n',textStyle:{bold:true}}}]}},{startIndex:9,endIndex:10,paragraph:{elements:[{textRun:{content:'\n'}}]}}]}};const loaded=await api.open(id);assert(loaded.html.includes('&lt;script&gt;'));assert(!loaded.html.includes('<script>'));assert.equal((loaded.html.match(/<p /g)||[]).length,1);
+data={...data,body:{content:[{table:{}}]}};await assert.rejects(api.open(id),/Tables/);
+requests=[];api.disconnect();await assert.rejects(api.create('No'),/Connect Google/);assert.equal(requests.length,0);assert.equal(store.size,0);
+api.connect('test.apps.googleusercontent.com');api.disconnect();callback({access_token:'stale-token'});assert.equal(api.state().connected,false);
+console.log('PASS: native Docs formatting, UTF-16 ranges, RTL, safe rendering, revision conflict, unsupported structure, disconnect and stale auth.');
+})().catch(e=>{console.error(e);process.exitCode=1;});

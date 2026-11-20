@@ -22,3 +22,23 @@ Official references:
 - https://developers.google.com/identity/oauth2/web/guides/use-token-model
 - https://developers.google.com/workspace/drive/api/guides/api-specific-auth
 - https://developers.google.com/workspace/drive/api/guides/search-files
+
+## Writing Workspace connection (v0.5)
+
+The Library remains read-only. The Writing Workspace uses a separate, page-memory token requesting only `https://www.googleapis.com/auth/drive.file`.
+
+Owner setup, using the same **My Office Web** client:
+1. Enable **Google Docs API** in the same Google Cloud project. Keep Drive API enabled.
+2. Add `https://www.googleapis.com/auth/drive.file` in Google Auth Platform → Data Access, retaining the existing read-only scope for the Library.
+3. Open Writing Workspace → Connect Google. The existing public client ID is reused on the same browser; enter it if missing.
+4. Authorize with the same Google account. Create a disposable document named **My Office — connection test**.
+5. Enter English and Arabic text, headings, bold, italic, underline and simple bullets. Click **Save to Drive** and wait for **Saved in Google Drive**.
+6. Refresh, reconnect, select **Open → Open from Google Drive**, and reopen the test document. Confirm text and supported formatting survived. Make another edit, Save, then check in Google Docs independently.
+
+Saved files are **native Google Docs in My Drive root**, marked with a private application property; existing library sources and Library_Metadata.json are not modified. The picker lists only documents created by this workspace. Pinning, scratchpad notes and unsaved local drafts remain session-only. No autosave, existing-document import, cloud research integration or export is implied.
+
+This first connection supports basic paragraphs, three heading levels, bold, italic, underline, simple bullets and paragraph direction. Complex documents (tables, multiple tabs, links, images, suggestions, headers/footers/footnotes) are rejected rather than flattened. Editing these is deferred to Google Docs. Supported-format drafts are limited to 100,000 characters and bounded formatting requests.
+
+Saving uses Google Docs revision guards. If the cloud revision differs, save a new document to preserve both versions. Network/API errors retain the local draft. A file ID returned during creation is retained for retry instead of blindly creating another file. If creation succeeds but its response is lost, inspect Drive before retrying; do not assume no file was created. Save is explicit; wait for success before leaving. Session expiry requires reconnecting and never stores an access token.
+
+References: [Drive scopes](https://developers.google.com/workspace/drive/api/guides/api-specific-auth), [Docs batch updates and write control](https://developers.google.com/workspace/docs/api/reference/rest/v1/documents/batchUpdate).

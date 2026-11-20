@@ -12,17 +12,17 @@ Dashboard, book cards and list, source details, sample reader, notes and note di
 
 ## Scope
 
-Navigation, sample filtering/sorting, book selection, theme switching, sidebar collapse and dialog interactions work locally. Pin changes and checkboxes last only for the current page session. Writing is an unsaved local preview. Form submissions show a preview acknowledgement and never upload or save data. The reader shows original illustrative placeholder prose, not book contents. Mind-map nodes open sample details; dragging and freehand links are not connected. The optional read-only book connection is described below; writing and research synchronization are planned separately.
+Navigation, sample filtering/sorting, book selection, theme switching, sidebar collapse and dialog interactions work locally. Pin changes and checkboxes last only for the current page session. Writing supports local drafts and explicit native Google Docs saves (v0.5 below). Research forms remain previews; writing saves explicitly to Google Drive. The reader shows original illustrative placeholder prose, not book contents. Mind-map nodes open sample details; dragging and freehand links are not connected. The optional read-only book connection is described below; research synchronization is planned separately.
 
 ## Files
 
 `index.html`, `styles.css`, `app.js`: portal. `library.html`, `library.css`, `library.js`: workspace. No installation or build required. Serve the folder with any static HTTP server or GitHub Pages.
 
-## Writing Workspace preview v0.3
+## Writing Workspace interface (introduced v0.3; cloud saving added v0.5)
 
 `writing.html`, `writing.css` and `writing.js` provide a dedicated glass writing interface. The Portal destination and Library navigation both open it in the same tab. A startup chooser stays open until dismissed or a document is chosen. The workspace includes a searchable sample document list, pinned sample documents, numbered open tabs, new-document templates, a temporary editable document, basic formatting, RTL/LTR, word count, outline, research cards, scratchpad, focus mode, appearance and layout settings, and matching close-workspace dialogs. Unpinning the document panel enables pointer-leave hiding; opening and closing it changes the editor layout.
 
-Documents and scratchpad contents are in page memory only. Switching tabs preserves those edits during the current page session; refreshing or navigating away clears them. Only theme preferences are stored in the browser. Import and export dialogs are visual previews and do not process files. No Google Docs, Drive, account authentication, or cloud saving has been connected.
+Documents and scratchpad contents are in page memory only. Switching tabs preserves those edits during the current page session; refreshing or navigating away clears them. Only theme preferences are stored in the browser. Import and export dialogs are visual previews and do not process files. This describes the original v0.3 preview. The v0.5 connection below adds explicit Google Docs saving.
 
 ## Read-only Google Drive integration v0.4
 
@@ -36,8 +36,11 @@ The OAuth client ID and optional folder ID are stored in the current browser's l
 
 ### One-time Google setup still required
 
-No OAuth client ID or account grant is bundled with this repository. The code is prepared, but live authorization and real-book browser verification cannot complete until an owner configures Google Cloud. See `DRIVE_SETUP.md`. The previously accessible ChatGPT Drive connection is independent of authorization for this public website.
+No OAuth client ID or account grant is bundled with this repository. The owner configured Google Cloud and confirmed successful real-library listing, PDF opening and scrolling on 21 November 2026. See `DRIVE_SETUP.md`. The previously accessible ChatGPT Drive connection is independent of authorization for this public website.
 
 ### Validation
 
-Run `node drive.test.cjs` to verify synthetic normalization, system-file exclusion, folder validation, pagination, cross-folder deduplication, GET-only requests, memory-only token storage and cancellation of stale authorization callbacks. Browser interface checks use local synthetic fixtures, not copied user data. The fixtures are excluded from the published files. Production signed-out navigation and the setup dialog can be checked before Cloud configuration; successful real OAuth and private-file access remain pending.
+Run `node drive.test.cjs` to verify synthetic normalization, system-file exclusion, folder validation, pagination, cross-folder deduplication, GET-only requests, memory-only token storage and cancellation of stale authorization callbacks. Browser interface checks use local synthetic fixtures, not copied user data. The fixtures are excluded from the published files. Production signed-out navigation and the setup dialog can be checked before Cloud configuration; the owner has now confirmed real OAuth and private PDF reading; writing save/reopen testing remains pending.
+
+### Writing v0.5
+Native Google Docs connection is available through Connect Google and explicit Save to Drive. Owner setup and real-account test steps are in DRIVE_SETUP.md. Library read-only access is unchanged. Only documents created by this workspace are listed/editable in this first writing connection. Local drafts and scratchpad remain temporary. Run `node writing-cloud.test.cjs` for the synthetic API/formatting tests. Real OAuth save/reopen testing requires the owner's Google account, Docs API and drive.file consent; it is not covered by mock tests.
