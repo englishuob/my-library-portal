@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="Ayman’s Library — a personal space for reading, thinking and writing.">
+  <title>Ayman’s Library</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="page-header">
+    <fieldset class="theme-picker" aria-label="Appearance">
+      <legend class="sr-only">Appearance</legend>
+      <label><input type="radio" name="theme" value="system"><span>System</span></label>
+      <label><input type="radio" name="theme" value="light"><span>Light</span></label>
+      <label><input type="radio" name="theme" value="dark" checked><span>Dark</span></label>
+    </fieldset>
+  </header>
+  <main class="portal" aria-label="Library portal">
+    <section class="brand" aria-labelledby="brand-title">
+      <svg class="brand-icon" viewBox="0 0 96 80" fill="none" aria-hidden="true">
+        <path d="M48 12C33 1 13 3 6 10v61c12-8 28-7 42 2 14-9 30-10 42-2V10C77 2 61 2 48 12Zm0 0v61" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>
+      </svg>
+      <h1 id="brand-title">Ayman’s Library</h1>
+      <p class="tagline">Read. Think. Write.</p>
+      <div class="brand-light" aria-hidden="true"></div>
+    </section>
+    <section class="entry" aria-labelledby="entry-title">
+      <h2 id="entry-title">Welcome back</h2>
+      <form id="portal-form">
+        <label for="destination">Open</label>
+        <div class="select-wrap">
+          <select id="destination" name="destination">
+            <option value="library">My Library</option>
+            <option value="writing">Writing Workspace</option>
+          </select>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+        </div>
+        <label for="password">Password</label>
+        <div class="password-wrap">
+          <svg class="lock-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          <input id="password" type="password" placeholder="Sign-in connection pending" autocomplete="current-password" aria-describedby="connection-status" disabled>
+          <svg class="eye-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <button class="enter-button" type="submit" disabled>Enter</button>
+        <p id="connection-status" class="connection-status" role="status">Design preview. Library sign-in will be connected in the next stage.</p>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
