@@ -1,46 +1,30 @@
 # Ayman’s Library — My Office
 
-A gradual rebuild of My Library. This release is an interface prototype, with the approved glass portal and a unified Library dashboard.
+A gradual rebuild of My Library, hosted on GitHub Pages. The approved glass portal opens the Library and Writing Workspace. Private files remain in Google Drive; no user data, OAuth credentials or access tokens are bundled in the repository.
 
-## Preview
+## Current release: research v0.6
 
-Open `index.html` and select a destination. Enter opens the selected preview in the same tab, without a password. All sample sources, notes, projects, illustrations and statistics are demonstration content. No personal files or authentication secrets are bundled. Optional read-only Google Drive authorization is described below.
+- **Books:** authorize `drive.readonly`, locate My Library or the selected folder, read Library_Metadata.json and enabled additional libraries, deduplicate sources, and open PDFs in the browser viewer. Other formats open in Drive. Original files, metadata, favorites and reading positions are not modified.
+- **Notes:** display comments, research notes, reflections and quotations from existing metadata, plus material records from the original research bridge. Original notes open read-only with a Create editable copy action. New notes support manual save/edit, source and page links, Arabic/English text, search and progressive listing.
+- **Projects:** display existing research-bridge projects, create projects, edit title/description and link books/notes. Project tabs show real linked sources and notes, including unavailable-item messages. Writing opens the separate writing workspace; it does not automatically copy project content.
+- **Enable saving:** explicitly reconnect with `drive.readonly` plus `drive.file`. Both permissions use the same session/account. Saves append separate immutable files with the existing `aymanResearchBridge=event-v1` public custom property and JSON description format. This implementation never PATCHes, deletes or changes sharing on an original research/source file. Public custom properties are visible to applications authorized for the file; they do not make a file publicly shared.
+- **Revision handling:** check the current heads before saving, reject stale edits, retain concurrent branches and flag conflicts. No automatic retry after uncertain saves. If a network error occurs, refresh and check the saved record before retrying.
+- **Writer v0.5:** explicit Save to Drive creates/updates native Google documents created by this workspace. Open lists those documents. Supports basic paragraphs, headings, bold/italic/underline, bullet lists and RTL/LTR; complex documents are rejected instead of flattened. Saves use revision checks. Drafts/scratchpad are temporary until explicitly saved.
 
-## Interfaces
+Unconnected Research Tray, Ideas Board and Insights are identified as pending in connected mode. Signed-out interfaces contain clearly labelled samples. Import/export dialogs, sample pinning and other preview-only tools are not production file operations. System/Light/Dark appearance is shared across the portal pages.
 
-Dashboard, book cards and list, source details, sample reader, notes and note dialog, projects and project tabs, research tray, ideas board, writing layout and document chooser, tags, collections, sample insights, help and compact settings dialogs. Navigation changes content inside one dashboard shell. System, Light and Dark share the portal theme preference.
+## Connection and privacy
 
-## Scope
+Configure a Web OAuth client for the website origin in Google Cloud, enable Drive API (and Docs API for writing), and configure the test account/scopes. See [DRIVE_SETUP.md](DRIVE_SETUP.md). The owner has already configured these and confirmed real library reading and native document save/reopen in Arabic and English on 21 November 2026.
 
-Navigation, sample filtering/sorting, book selection, theme switching, sidebar collapse and dialog interactions work locally. Pin changes and checkboxes last only for the current page session. Writing supports local drafts and explicit native Google Docs saves (v0.5 below). Research forms remain previews; writing saves explicitly to Google Drive. The reader shows original illustrative placeholder prose, not book contents. Mind-map nodes open sample details; dragging and freehand links are not connected. The optional read-only book connection is described below; research synchronization is planned separately.
+Only public connection settings (client ID and optional folder ID) and appearance preferences are stored in localStorage. Access tokens, catalogues, research data and drafts stay in page memory. Reconnect after a page reload. Disconnect/expiry clears connected research and catalogue data. Disconnect drops the page session; revoking the app grant is a separate Google Account action. Folder selection is an app filter, not a folder-scoped OAuth grant. Research bridge discovery searches the authorized account's owned research event files across Drive.
 
-## Files
+## Validation
 
-`index.html`, `styles.css`, `app.js`: portal. `library.html`, `library.css`, `library.js`: workspace. No installation or build required. Serve the folder with any static HTTP server or GitHub Pages.
+Run `node drive.test.cjs`, `node research.test.cjs` and `node writing-cloud.test.cjs`.
 
-## Writing Workspace interface (introduced v0.3; cloud saving added v0.5)
+Synthetic tests cover metadata imports/deduplication, folder pagination, readonly write rejection, Arabic, immutable save/reload/edit, stale revisions, concurrent branches, project links, token lifetime, formatting and unsupported documents. Browser checks use local synthetic OAuth/Drive transport and exercise note save, source linking and project tabs; these fixtures are not published. Real Notes/Projects authorization and save/reopen still need the owner's browser session; synthetic tests do not establish real-account success.
 
-`writing.html`, `writing.css` and `writing.js` provide a dedicated glass writing interface. The Portal destination and Library navigation both open it in the same tab. A startup chooser stays open until dismissed or a document is chosen. The workspace includes a searchable sample document list, pinned sample documents, numbered open tabs, new-document templates, a temporary editable document, basic formatting, RTL/LTR, word count, outline, research cards, scratchpad, focus mode, appearance and layout settings, and matching close-workspace dialogs. Unpinning the document panel enables pointer-leave hiding; opening and closing it changes the editor layout.
+## Hosting
 
-Documents and scratchpad contents are in page memory only. Switching tabs preserves those edits during the current page session; refreshing or navigating away clears them. Only theme preferences are stored in the browser. Import and export dialogs are visual previews and do not process files. This describes the original v0.3 preview. The v0.5 connection below adds explicit Google Docs saving.
-
-## Read-only Google Drive integration v0.4
-
-The Library toolbar now provides **Connect Drive**, also available through Account and Customize → Connection. The connection uses Google Identity Services and the Drive REST API. It requests only `https://www.googleapis.com/auth/drive.readonly`. That Google permission covers readable files across the authorized account; this implementation limits its listing to the selected Library folder and the enabled additional locations in that folder's metadata. Folder selection is an application boundary, not a folder-scoped OAuth permission.
-
-The connection discovers a unique `My Library` folder, or uses a folder URL/ID supplied in Connection settings. It reads the existing `Library_Metadata.json` without migration or writes, follows enabled `__library.storageLocations`, handles paginated listings and deduplicates file IDs. It excludes password files, metadata backups and `Writing - ` documents. Supported source listings include PDF, EPUB, Google Docs, DOCX and text. Source IDs remain strings; missing authors, dates or page counts are not invented. `favorite` is displayed as the source's saved favorite, not assumed to be the previous app's separately stored pinned list.
-
-PDF files are fetched with a Bearer header into a temporary Blob and displayed in the browser's PDF viewer. The token is never put in the iframe URL. Files that cannot be downloaded, unsupported in-app formats and viewer failures have an Open in Google Drive alternative. The new reader does not save pages or bookmarks. In connected mode, unconnected notes/projects/research/ideas/insights display a connection-stage message instead of mixing sample data with the real catalogue. Category and tag views use the read source metadata.
-
-The OAuth client ID and optional folder ID are stored in the current browser's localStorage. Access tokens, source contents and catalogues stay in page memory. Refreshing or navigating to another page requires reconnecting; expired access or Disconnect clears the connected view. Disconnect ends this page's session; it does not revoke the application's Google grant. Users can revoke that grant in Google Account permissions. No files or sharing permissions are changed.
-
-### One-time Google setup still required
-
-No OAuth client ID or account grant is bundled with this repository. The owner configured Google Cloud and confirmed successful real-library listing, PDF opening and scrolling on 21 November 2026. See `DRIVE_SETUP.md`. The previously accessible ChatGPT Drive connection is independent of authorization for this public website.
-
-### Validation
-
-Run `node drive.test.cjs` to verify synthetic normalization, system-file exclusion, folder validation, pagination, cross-folder deduplication, GET-only requests, memory-only token storage and cancellation of stale authorization callbacks. Browser interface checks use local synthetic fixtures, not copied user data. The fixtures are excluded from the published files. Production signed-out navigation and the setup dialog can be checked before Cloud configuration; the owner has now confirmed real OAuth and private PDF reading; writing save/reopen testing remains pending.
-
-### Writing v0.5
-Native Google Docs connection is available through Connect Google and explicit Save to Drive. Owner setup and real-account test steps are in DRIVE_SETUP.md. Library read-only access is unchanged. Only documents created by this workspace are listed/editable in this first writing connection. Local drafts and scratchpad remain temporary. Run `node writing-cloud.test.cjs` for the synthetic API/formatting tests. Real OAuth save/reopen testing requires the owner's Google account, Docs API and drive.file consent; it is not covered by mock tests.
+Static HTML/CSS/JavaScript, no build required. Serve the repository root or use GitHub Pages main/root. `index.html` is the portal, `library.html` the Library and `writing.html` the writer. `drive-model.js` and `research-model.js` adapt existing data; `drive.js` handles authorized API calls; `research-ui.js` renders research controls. Never add a client secret, token, downloaded metadata, private fixture or personal file to this public repository.

@@ -42,3 +42,15 @@ This first connection supports basic paragraphs, three heading levels, bold, ita
 Saving uses Google Docs revision guards. If the cloud revision differs, save a new document to preserve both versions. Network/API errors retain the local draft. A file ID returned during creation is retained for retry instead of blindly creating another file. If creation succeeds but its response is lost, inspect Drive before retrying; do not assume no file was created. Save is explicit; wait for success before leaving. Session expiry requires reconnecting and never stores an access token.
 
 References: [Drive scopes](https://developers.google.com/workspace/drive/api/guides/api-specific-auth), [Docs batch updates and write control](https://developers.google.com/workspace/docs/api/reference/rest/v1/documents/batchUpdate).
+
+## Notes & Projects v0.6
+
+The existing Cloud setup already includes the required `drive.readonly` and `drive.file` scopes. No new API or broader full-Drive write scope is required.
+
+1. Open Library and Connect Drive normally; Notes/Projects load existing data in read-only mode.
+2. In Notes or Projects choose **Enable saving**, then **Connect & enable saving**. Select the same Google account as the library and review Google's permissions.
+3. Create a test note, choose a source/page, and Save to Drive. Create a project and link the note and source.
+4. Refresh Drive; reopen both and verify content/links. Refresh the browser, reconnect and verify again.
+5. Edit the test note, Save to Drive, refresh and verify the latest text. Imported original notes use Create editable copy; they are not overwritten.
+
+Research saves are separate append-only Drive event files compatible with the existing research bridge; source PDFs and Library_Metadata.json are never changed. A damaged/unreadable history disables saving. Conflicting branches remain in Drive and are flagged; conflict resolution and deletion are outside this first research release. If a network error leaves the save uncertain, refresh and check before retrying.
