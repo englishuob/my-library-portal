@@ -54,3 +54,10 @@ The existing Cloud setup already includes the required `drive.readonly` and `dri
 5. Edit the test note, Save to Drive, refresh and verify the latest text. Imported original notes use Create editable copy; they are not overwritten.
 
 Research saves are separate append-only Drive event files compatible with the existing research bridge; source PDFs and Library_Metadata.json are never changed. A damaged/unreadable history disables saving. Conflicting branches remain in Drive and are flagged; conflict resolution and deletion are outside this first research release. If a network error leaves the save uncertain, refresh and check before retrying.
+
+
+## Book uploads v0.7
+
+No new Cloud API or full-Drive write scope is required. Connect Drive, open My Books → Add book → Enable uploads if prompted. Reopen Add book, choose PDF/EPUB (up to 200 MB), enter title/author/category and upload. The app creates My Office Books at Drive root on first use and automatically reads its contents thereafter. It does not write to the legacy Library_Metadata.json. The existing Apps Script app will not automatically discover this separate folder unless separately configured there.
+
+Check the card and PDF reader, refresh Drive and verify the metadata. Reload/reconnect and verify again. Repeat with EPUB (opens through Drive; no in-library EPUB reader is claimed). On an interrupted upload, keep the page open and choose Check & resume. If the page is reloaded, check Drive before uploading a second copy. A duplicate-title/format guard requires explicit opt-in for a separate copy.

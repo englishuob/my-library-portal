@@ -2,7 +2,13 @@
 
 A gradual rebuild of My Library, hosted on GitHub Pages. The approved glass portal opens the Library and Writing Workspace. Private files remain in Google Drive; no user data, OAuth credentials or access tokens are bundled in the repository.
 
-## Current release: research v0.6
+## Current release: book uploads v0.7
+
+**Add book** in My Books uploads one PDF or EPUB (up to 200 MB) with title, author and category to **My Office Books** in Google Drive. This app-created folder is automatically included on refresh/reconnect; the existing Library_Metadata.json is not changed. Metadata travels in the new file’s description and is normalized into cards on reload. Enable uploads uses the same `drive.readonly` + `drive.file` authorization already used for research saving.
+
+Uploads validate extension/header/size, warn about duplicate title + format, and use resumable Drive sessions with preallocated file IDs. Check & resume queries status before sending remaining bytes; IDs stay fixed to prevent an uncertain retry from creating a second file. Tokens, file objects and upload-session URLs stay in page memory. Keep the page open while uploading. A reload ends local resume state; check Drive before choosing the same file again. EPUB validation checks the required initial mimetype record; it does not audit every publication component.
+
+## Research connection v0.6
 
 - **Books:** authorize `drive.readonly`, locate My Library or the selected folder, read Library_Metadata.json and enabled additional libraries, deduplicate sources, and open PDFs in the browser viewer. Other formats open in Drive. Original files, metadata, favorites and reading positions are not modified.
 - **Notes:** display comments, research notes, reflections and quotations from existing metadata, plus material records from the original research bridge. Original notes open read-only with a Create editable copy action. New notes support manual save/edit, source and page links, Arabic/English text, search and progressive listing.
@@ -21,9 +27,9 @@ Only public connection settings (client ID and optional folder ID) and appearanc
 
 ## Validation
 
-Run `node drive.test.cjs`, `node research.test.cjs` and `node writing-cloud.test.cjs`.
+Run `node drive.test.cjs`, `node research.test.cjs`, `node writing-cloud.test.cjs` and `node upload.test.cjs`. Upload tests cover file validation, size limits, metadata persistence, managed folders, duplicate guarding and interrupted-session resumption with a fixed ID.
 
-Synthetic tests cover metadata imports/deduplication, folder pagination, readonly write rejection, Arabic, immutable save/reload/edit, stale revisions, concurrent branches, project links, token lifetime, formatting and unsupported documents. Browser checks use local synthetic OAuth/Drive transport and exercise note save, source linking and project tabs; these fixtures are not published. Real Notes/Projects authorization and save/reopen still need the owner's browser session; synthetic tests do not establish real-account success.
+Synthetic tests cover metadata imports/deduplication, folder pagination, readonly write rejection, Arabic, immutable save/reload/edit, stale revisions, concurrent branches, project links, token lifetime, formatting and unsupported documents. Browser checks use local synthetic OAuth/Drive transport and exercise note save, source linking and project tabs; these fixtures are not published. Real Notes/Projects authorization, note creation/edit, project links and reopening after page reload were verified in the owner’s browser session. Upload real-account verification is recorded separately from synthetic checks.
 
 ## Hosting
 
